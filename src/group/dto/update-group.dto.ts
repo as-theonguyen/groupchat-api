@@ -1,10 +1,10 @@
-import { Field, InputType } from '@nestjs/graphql';
+import { Field, ID, InputType } from '@nestjs/graphql';
 import { IsNotEmpty, IsUUID } from 'class-validator';
 
 @InputType()
 export class UpdateGroupInput {
   @IsUUID()
-  @Field()
+  @Field(() => ID)
   id: string;
 
   @IsNotEmpty()

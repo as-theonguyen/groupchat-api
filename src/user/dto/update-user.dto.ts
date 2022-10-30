@@ -1,4 +1,4 @@
-import { Field, InputType } from '@nestjs/graphql';
+import { Field, ID, InputType } from '@nestjs/graphql';
 import {
   IsEmail,
   IsNotEmpty,
@@ -10,7 +10,7 @@ import {
 @InputType()
 export class UpdateUserInput {
   @IsUUID()
-  @Field()
+  @Field(() => ID)
   id: string;
 
   @IsEmail()

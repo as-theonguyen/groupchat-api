@@ -1,23 +1,51 @@
-import { Mutation, Query, Resolver } from '@nestjs/graphql';
+import { UseGuards } from '@nestjs/common';
+import { Args, Context, Mutation, Query, Resolver } from '@nestjs/graphql';
+import { AuthGqlGuard } from '@src/auth/guards/auth.gql-guard';
+import { GraphQLContext } from '@src/graphql/types';
+import { CreateGroupInput } from './dto/create-group.dto';
+import { GroupInput } from './dto/group.dto';
+import { UpdateGroupInput } from './dto/update-group.dto';
 import { GroupService } from './group.service';
 import { Group } from './group.type';
+import { GroupAdminGuard } from './guards/group-admin.guard';
 
 @Resolver()
 export class GroupResolver {
   constructor(private readonly groupService: GroupService) {}
 
   @Query(() => [Group], { nullable: 'items' })
-  async groups() {}
+  async groups() {
+    const allGroups = await this.groupService.findAll();
+    return allGroups;
+  }
 
   @Query(() => Group)
-  async group() {}
+  async group(@Args('input') input: GroupInput) {
+    const group = await this.groupService.findById(input.id);
+    return group;
+  }
 
   @Mutation(() => Group)
-  async createGroup() {}
+  @UseGuards(AuthGqlGuard)
+  async createGroup(
+    @Args('input') input: CreateGroupInput,
+    @Context() { user }: GraphQLContext
+  ) {
+    const group = await this.groupService.create(user.id, input);
+    return group;
+  }
 
   @Mutation(() => Group)
-  async updateGroup() {}
+  @UseGuards(AuthGqlGuard, GroupAdminGuard)
+  async updateGroup(@Args('input') input: UpdateGroupInput) {
+    const updatedGroup = await this.groupService.update(input);
+    return updatedGroup;
+  }
 
   @Mutation(() => Boolean)
-  async deleteGroup() {}
+  @UseGuards(AuthGqlGuard, GroupAdminGuard)
+  async removeGroup(@Args('input') input: GroupInput) {
+    const result = await this.groupService.remove(input.id);
+    return result;
+  }
 }

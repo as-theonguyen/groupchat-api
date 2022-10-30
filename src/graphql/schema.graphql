@@ -2,24 +2,47 @@
 # THIS FILE WAS AUTOMATICALLY GENERATED (DO NOT MODIFY)
 # ------------------------------------------------------
 
+input CreateGroupInput {
+  name: String!
+}
+
+type Group {
+  id: ID!
+  name: String!
+}
+
+input GroupInput {
+  id: ID!
+}
+
 type Mutation {
+  createGroup(input: CreateGroupInput!): Group!
+  removeGroup(input: GroupInput!): Boolean!
+  updateGroup(input: UpdateGroupInput!): Group!
   updateUser(input: UpdateUserInput!): User!
 }
 
 type Query {
+  group(input: GroupInput!): Group!
+  groups: [Group]!
   me: User
+}
+
+input UpdateGroupInput {
+  id: ID!
+  name: String!
 }
 
 input UpdateUserInput {
   currentPassword: String!
   email: String
-  id: String!
+  id: ID!
   password: String
   username: String
 }
 
 type User {
   email: String!
-  id: String!
+  id: ID!
   username: String!
 }
