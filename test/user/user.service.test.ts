@@ -79,7 +79,7 @@ describe('UserService', () => {
 
   describe('updateOne', () => {
     it('should find and update the user', async () => {
-      const result = await userService.updateOne({
+      const result = await userService.update({
         id: user.id,
         email: 'new@email.com',
         password: 'newpassword',
@@ -98,7 +98,7 @@ describe('UserService', () => {
 
     it('should check the current password', async () => {
       await expect(
-        userService.updateOne({
+        userService.update({
           id: user.id,
           username: 'asdf',
           currentPassword: 'wrongpassword',

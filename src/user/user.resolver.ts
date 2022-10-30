@@ -18,7 +18,7 @@ export class UserResolver {
   @Mutation(() => User)
   @UseGuards(UserGuard)
   async updateUser(@Args('input') input: UpdateUserInput) {
-    const updatedUser = await this.userService.updateOne(input);
+    const updatedUser = await this.userService.update(input);
     return updatedUser;
   }
 }
