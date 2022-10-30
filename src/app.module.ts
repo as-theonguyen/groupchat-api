@@ -1,11 +1,15 @@
+import { join } from 'path';
 import { Module } from '@nestjs/common';
 import { ConfigModule, ConfigService } from '@nestjs/config';
+import { GraphQLModule } from '@nestjs/graphql';
+import { ApolloDriver, ApolloDriverConfig } from '@nestjs/apollo';
 import configuration from '@src/config/configuration';
 import knexConfig from '@src/config/knexfile';
 import { KnexModule } from '@src/knex/knex.module';
 import { UserModule } from '@src/user/user.module';
 import { AuthModule } from '@src/auth/auth.module';
 import { UtilModule } from '@src/util/util.module';
+import { UtilService } from '@src/util/util.service';
 
 @Module({
   imports: [
@@ -20,6 +24,28 @@ import { UtilModule } from '@src/util/util.module';
         const env = configService.get('env');
         const knexOptions = knexConfig[env];
         return knexOptions;
+      },
+    }),
+    GraphQLModule.forRootAsync<ApolloDriverConfig>({
+      driver: ApolloDriver,
+      imports: [UtilModule],
+      inject: [UtilService],
+      useFactory: (utilService: UtilService) => {
+        return {
+          cors: false,
+          path: '/api/graphql',
+          autoSchemaFile: join(
+            process.cwd(),
+            'src',
+            'graphql',
+            'schema.graphql'
+          ),
+          sortSchema: true,
+          context: async ({ req, res }) => {
+            const ctx = await utilService.buildGraphQLContext(req, res);
+            return ctx;
+          },
+        };
       },
     }),
     UserModule,

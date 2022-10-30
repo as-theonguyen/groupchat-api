@@ -1,12 +1,22 @@
 import { CanActivate, ExecutionContext, Injectable } from '@nestjs/common';
+import { GqlExecutionContext } from '@nestjs/graphql';
 
 @Injectable()
 export class UserGuard implements CanActivate {
   async canActivate(context: ExecutionContext) {
-    const request = context.switchToHttp().getRequest();
+    const ctx = GqlExecutionContext.create(context);
 
-    const id = request.params.id;
+    const args = ctx.getArgs();
+    const graphQLContext = ctx.getContext();
 
-    return id === request.user.id;
+    if (!graphQLContext.user) {
+      throw new Error('Unauthorized');
+    }
+
+    if (args.input.id !== graphQLContext.user.id) {
+      throw new Error('Unauthorized');
+    }
+
+    return true;
   }
 }

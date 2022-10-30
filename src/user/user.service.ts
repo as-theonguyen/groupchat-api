@@ -2,7 +2,7 @@ import { Inject, Injectable } from '@nestjs/common';
 import { hash, verify } from 'argon2';
 import { Knex } from 'knex';
 import { KNEX_CONNECTION } from '@src/knex/knex.module';
-import { UpdateUserDTO } from '@src/user/dto/update-user.dto';
+import { UpdateUserInput } from '@src/user/dto/update-user.dto';
 
 @Injectable()
 export class UserService {
@@ -35,7 +35,7 @@ export class UserService {
     return user;
   }
 
-  async updateOne(id: string, { currentPassword, ...input }: UpdateUserDTO) {
+  async updateOne({ currentPassword, id, ...input }: UpdateUserInput) {
     const result = await this.knex.transaction(async (trx) => {
       try {
         const [user] = await trx('users').select('*').where('id', '=', id);
