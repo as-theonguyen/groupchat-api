@@ -1,4 +1,5 @@
 import { Field, ID, ObjectType } from '@nestjs/graphql';
+import { Membership } from '@src/membership/membership.type';
 
 @ObjectType()
 export class User {
@@ -10,4 +11,7 @@ export class User {
 
   @Field()
   username: string;
+
+  @Field(() => [Membership], { nullable: 'items' })
+  memberships: Membership[];
 }

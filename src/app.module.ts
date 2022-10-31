@@ -11,6 +11,7 @@ import { AuthModule } from '@src/auth/auth.module';
 import { UtilModule } from '@src/util/util.module';
 import { UtilService } from '@src/util/util.service';
 import { GroupModule } from './group/group.module';
+import { MembershipModule } from './membership/membership.module';
 
 @Module({
   imports: [
@@ -53,6 +54,7 @@ import { GroupModule } from './group/group.module';
     AuthModule,
     UtilModule,
     GroupModule,
+    MembershipModule,
   ],
 })
 export class AppModule {}
