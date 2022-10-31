@@ -108,6 +108,15 @@ describe('GroupResolver', () => {
         createGroup(input: $input) {
           id
           name
+          memberships {
+            id
+            admin
+            user {
+              id
+              email
+              username
+            }
+          }
         }
       }
     `;
@@ -129,7 +138,19 @@ describe('GroupResolver', () => {
         },
       });
 
-      expect(response.data.createGroup).toMatchObject(createGroupData);
+      expect(response.data.createGroup).toMatchObject({
+        name: createGroupData.name,
+        memberships: [
+          {
+            admin: true,
+            user: {
+              id: member.id,
+              email: member.email,
+              username: member.username,
+            },
+          },
+        ],
+      });
     });
 
     it('should only allow logged in users to proceed', async () => {
@@ -226,8 +247,6 @@ describe('GroupResolver', () => {
           },
         },
       });
-
-      console.log(response);
 
       expect(response.data).toBe(null);
 

@@ -4,6 +4,9 @@ import { JwtService } from '@nestjs/jwt';
 import { KNEX_CONNECTION } from '@src/knex/knex.module';
 import { Knex } from 'knex';
 import { v4 } from 'uuid';
+import { GetInviteTokenInput } from './dto/get-invite-token.dto';
+import { JoinInput } from './dto/join.dto';
+import { LeaveInput } from './dto/leave.dto';
 
 @Injectable()
 export class MembershipService {
@@ -13,7 +16,7 @@ export class MembershipService {
     private readonly configService: ConfigService
   ) {}
 
-  async getInviteToken(groupId: string) {
+  async getInviteToken({ groupId }: GetInviteTokenInput) {
     const token = await this.jwtService.signAsync(
       { groupId },
       { secret: this.configService.get('jwtSecret'), expiresIn: '10m' }
@@ -22,9 +25,9 @@ export class MembershipService {
     return token;
   }
 
-  async join(userId: string, token: string) {
+  async join({ inviteToken, userId }: JoinInput) {
     try {
-      const payload = await this.jwtService.verifyAsync(token, {
+      const payload = await this.jwtService.verifyAsync(inviteToken, {
         secret: this.configService.get('jwtSecret'),
       });
 
@@ -44,7 +47,7 @@ export class MembershipService {
     }
   }
 
-  async leave(userId: string, groupId: string) {
+  async leave({ userId, groupId }: LeaveInput) {
     try {
       await this.knex('memberships')
         .delete()

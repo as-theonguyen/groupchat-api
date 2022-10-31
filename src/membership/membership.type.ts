@@ -15,4 +15,8 @@ export class Membership {
 
   @Field(() => Group)
   group: Group;
+
+  userId: string;
+
+  groupId: string;
 }

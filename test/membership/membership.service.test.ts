@@ -48,7 +48,9 @@ describe('MembershipService', () => {
 
   describe('getInviteToken', () => {
     it('should generate and return the jwt', async () => {
-      const result = await membershipService.getInviteToken(group.id);
+      const result = await membershipService.getInviteToken({
+        groupId: group.id,
+      });
       expect(result).toBeDefined();
 
       const payload = await jwt.verifyAsync(result, {
@@ -68,7 +70,10 @@ describe('MembershipService', () => {
         { secret: configService.get('jwtSecret'), expiresIn: '10m' }
       );
 
-      const result = await membershipService.join(user.id, token);
+      const result = await membershipService.join({
+        inviteToken: token,
+        userId: user.id,
+      });
 
       expect(result).toMatchObject({
         userId: user.id,
@@ -89,7 +94,10 @@ describe('MembershipService', () => {
 
   describe('leave', () => {
     it('should delete the membership from the database', async () => {
-      const result = await membershipService.leave(user.id, group.id);
+      const result = await membershipService.leave({
+        userId: user.id,
+        groupId: group.id,
+      });
       expect(result).toBe(true);
 
       const [membershipInDb] = await knex('memberships')
