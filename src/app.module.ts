@@ -12,6 +12,7 @@ import { UtilModule } from '@src/util/util.module';
 import { UtilService } from '@src/util/util.service';
 import { GroupModule } from './group/group.module';
 import { MembershipModule } from './membership/membership.module';
+import { MessageModule } from './message/message.module';
 
 @Module({
   imports: [
@@ -55,6 +56,7 @@ import { MembershipModule } from './membership/membership.module';
     UtilModule,
     GroupModule,
     MembershipModule,
+    MessageModule,
   ],
 })
 export class AppModule {}

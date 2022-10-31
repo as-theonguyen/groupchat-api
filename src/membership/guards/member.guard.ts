@@ -20,7 +20,7 @@ export class MemberGuard implements CanActivate {
     const [membership] = await this.knex('memberships')
       .select('*')
       .where({ userId: gqlContext.user.id })
-      .andWhere({ groupId: args.input.groupId });
+      .andWhere({ groupId: args.input.groupId || args.input.id });
 
     if (!membership) {
       throw new Error('Unauthorized');

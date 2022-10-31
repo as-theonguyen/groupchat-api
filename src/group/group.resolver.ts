@@ -11,7 +11,9 @@ import {
 import { AuthGqlGuard } from '@src/auth/guards/auth.gql-guard';
 import { GraphQLContext } from '@src/graphql/types';
 import { KNEX_CONNECTION } from '@src/knex/knex.module';
+import { MemberGuard } from '@src/membership/guards/member.guard';
 import { Membership } from '@src/membership/membership.type';
+import { Message } from '@src/message/message.type';
 import { Knex } from 'knex';
 import { CreateGroupInput } from './dto/create-group.dto';
 import { GroupInput } from './dto/group.dto';
@@ -38,13 +40,19 @@ export class GroupResolver {
     return memberships;
   }
 
-  @Query(() => [Group], { nullable: 'items' })
-  async groups() {
-    const allGroups = await this.groupService.findAll();
-    return allGroups;
+  @ResolveField(() => [Message], { nullable: 'items' })
+  async messages(@Root() group: Group) {
+    const messages = await this.knex
+      .select('ms.*')
+      .from('messages as ms')
+      .join('groups as g', 'ms.groupId', '=', 'g.id')
+      .where('ms.groupId', '=', group.id);
+
+    return messages;
   }
 
   @Query(() => Group)
+  @UseGuards(AuthGqlGuard, MemberGuard)
   async group(@Args('input') input: GroupInput) {
     const group = await this.groupService.findById(input.id);
     return group;

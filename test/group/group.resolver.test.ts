@@ -16,12 +16,18 @@ describe('GroupResolver', () => {
   const admin = userFactory.build();
   const member = userFactory.build();
 
+  const user = userFactory.build();
+
   const adminToken = tokenFactory
     .params({ context: 'access', userId: admin.id })
     .build();
 
   const memberToken = tokenFactory
     .params({ context: 'access', userId: member.id })
+    .build();
+
+  const userToken = tokenFactory
+    .params({ context: 'access', userId: user.id })
     .build();
 
   const group = groupFactory.build();
@@ -37,9 +43,9 @@ describe('GroupResolver', () => {
     app = await initialize({ logger: false });
     knex = app.get(KNEX_CONNECTION);
 
-    await knex('users').insert([admin, member]);
+    await knex('users').insert([admin, member, user]);
 
-    await knex('user_tokens').insert([adminToken, memberToken]);
+    await knex('user_tokens').insert([adminToken, memberToken, userToken]);
 
     await knex('groups').insert(group);
 
@@ -53,27 +59,6 @@ describe('GroupResolver', () => {
     await knex('groups').delete();
     await knex.destroy();
     await app.close();
-  });
-
-  describe('groups query', () => {
-    const groupsQuery = /* GraphQL */ `
-      query Groups {
-        groups {
-          id
-          name
-        }
-      }
-    `;
-
-    it('should return all groups', async () => {
-      const response = await sendGraphQLRequest({
-        app: app.getHttpServer(),
-        query: groupsQuery,
-        operationName: 'Groups',
-      });
-
-      expect(response.data.groups).toMatchObject([group]);
-    });
   });
 
   describe('group query', () => {
@@ -91,6 +76,9 @@ describe('GroupResolver', () => {
         app: app.getHttpServer(),
         query: groupQuery,
         operationName: 'Group',
+        headers: {
+          authorization: memberToken.value,
+        },
         variables: {
           input: {
             id: group.id,
@@ -99,6 +87,26 @@ describe('GroupResolver', () => {
       });
 
       expect(response.data.group).toMatchObject(group);
+    });
+
+    it('should only allow group members to proceed', async () => {
+      const response = await sendGraphQLRequest({
+        app: app.getHttpServer(),
+        query: groupQuery,
+        operationName: 'Group',
+        headers: {
+          authorization: userToken.value,
+        },
+        variables: {
+          input: {
+            id: group.id,
+          },
+        },
+      });
+
+      expect(response.data).toBeNull();
+
+      expect(response.errors[0].message).toBe('Unauthorized');
     });
   });
 

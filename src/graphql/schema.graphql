@@ -6,6 +6,15 @@ input CreateGroupInput {
   name: String!
 }
 
+input CreateMessageInput {
+  content: String!
+  groupId: ID!
+}
+
+input FindByGroupInput {
+  groupId: ID!
+}
+
 input GetInviteTokenInput {
   groupId: ID!
 }
@@ -13,6 +22,7 @@ input GetInviteTokenInput {
 type Group {
   id: ID!
   memberships: [Membership]!
+  messages: [Message]!
   name: String!
 }
 
@@ -37,11 +47,24 @@ type Membership {
   user: User!
 }
 
+type Message {
+  content: String!
+  group: Group!
+  id: ID!
+  user: User!
+}
+
+input MessageInput {
+  id: ID!
+}
+
 type Mutation {
   createGroup(input: CreateGroupInput!): Group!
+  createMessage(input: CreateMessageInput!): Message!
   join(input: JoinInput!): Membership!
   leave(input: LeaveInput!): Boolean!
   removeGroup(input: GroupInput!): Boolean!
+  removeMessage(input: MessageInput!): Boolean!
   updateGroup(input: UpdateGroupInput!): Group!
   updateUser(input: UpdateUserInput!): User!
 }
@@ -49,8 +72,8 @@ type Mutation {
 type Query {
   getInviteToken(input: GetInviteTokenInput!): String!
   group(input: GroupInput!): Group!
-  groups: [Group]!
   me: User
+  messages(input: FindByGroupInput!): [Message]!
 }
 
 input UpdateGroupInput {
@@ -70,5 +93,6 @@ type User {
   email: String!
   id: ID!
   memberships: [Membership]!
+  messages: [Message]!
   username: String!
 }

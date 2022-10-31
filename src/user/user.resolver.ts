@@ -16,6 +16,7 @@ import { UserGuard } from '@src/user/guards/user.guard';
 import { Membership } from '@src/membership/membership.type';
 import { KNEX_CONNECTION } from '@src/knex/knex.module';
 import { Knex } from 'knex';
+import { Message } from '@src/message/message.type';
 
 @Resolver(() => User)
 export class UserResolver {
@@ -33,6 +34,17 @@ export class UserResolver {
       .where('m.userId', '=', user.id);
 
     return memberships;
+  }
+
+  @ResolveField(() => [Message], { nullable: 'items' })
+  async messages(@Root() user: User) {
+    const messages = await this.knex
+      .select('ms.*')
+      .from('messages as ms')
+      .join('users as u', 'ms.userId', '=', 'u.id')
+      .where('ms.userId', '=', user.id);
+
+    return messages;
   }
 
   @Query(() => User, { nullable: true })
