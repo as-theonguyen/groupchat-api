@@ -2,7 +2,7 @@ import { Factory } from 'fishery';
 import { v4 } from 'uuid';
 import { faker } from '@faker-js/faker';
 
-type UserType = {
+export type UserType = {
   id: string;
   email: string;
   username: string;

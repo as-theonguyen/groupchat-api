@@ -76,6 +76,10 @@ type Query {
   messages(input: FindByGroupInput!): [Message]!
 }
 
+type Subscription {
+  messageAdded(input: FindByGroupInput!): Message!
+}
+
 input UpdateGroupInput {
   id: ID!
   name: String!

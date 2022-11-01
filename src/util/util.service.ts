@@ -21,10 +21,8 @@ export class UtilService {
     });
   }
 
-  async buildGraphQLContext(req: Request, res: Response) {
+  async buildGraphQLContext(authorization?: string) {
     let user: User | null;
-
-    const { authorization } = req.headers;
 
     if (!authorization) {
       user = null;
@@ -33,8 +31,6 @@ export class UtilService {
     }
 
     return {
-      req,
-      res,
       user,
     };
   }

@@ -13,6 +13,8 @@ import { UtilService } from '@src/util/util.service';
 import { GroupModule } from './group/group.module';
 import { MembershipModule } from './membership/membership.module';
 import { MessageModule } from './message/message.module';
+import { PubsubModule } from './pubsub/pubsub.module';
+import { GraphQLContext } from './graphql/types';
 
 @Module({
   imports: [
@@ -44,9 +46,27 @@ import { MessageModule } from './message/message.module';
             'schema.graphql'
           ),
           sortSchema: true,
-          context: async ({ req, res }) => {
-            const ctx = await utilService.buildGraphQLContext(req, res);
+          context: async ({ req, extra }) => {
+            let ctx: GraphQLContext;
+
+            if (extra && extra.authorization) {
+              ctx = await utilService.buildGraphQLContext(extra.authorization);
+            } else if (req && req.headers.authorization) {
+              ctx = await utilService.buildGraphQLContext(
+                req.headers.authorization
+              );
+            } else {
+              ctx = await utilService.buildGraphQLContext();
+            }
+
             return ctx;
+          },
+          subscriptions: {
+            'graphql-ws': {
+              onConnect: ({ connectionParams, extra }: any) => {
+                extra.authorization = connectionParams.authorization;
+              },
+            },
           },
         };
       },
@@ -57,6 +77,7 @@ import { MessageModule } from './message/message.module';
     GroupModule,
     MembershipModule,
     MessageModule,
+    PubsubModule,
   ],
 })
 export class AppModule {}
