@@ -12,12 +12,10 @@ import {
 import { AuthGqlGuard } from '@src/auth/guards/auth.gql-guard';
 import { GraphQLContext } from '@src/graphql/types';
 import { Group } from '@src/group/group.type';
-import { KNEX_CONNECTION } from '@src/knex/knex.module';
 import { MemberGuard } from '@src/membership/guards/member.guard';
 import { PUB_SUB } from '@src/pubsub/pubsub.module';
 import { User } from '@src/user/user.type';
 import { RedisPubSub } from 'graphql-redis-subscriptions';
-import { Knex } from 'knex';
 import { CreateMessageInput } from './dto/create-message.dto';
 import { FindByGroupInput } from './dto/find-by-group.dto';
 import { MessageInput } from './dto/message.dto';
@@ -29,30 +27,17 @@ import { Message } from './message.type';
 export class MessageResolver {
   constructor(
     private readonly messageService: MessageService,
-    @Inject(KNEX_CONNECTION) private readonly knex: Knex,
     @Inject(PUB_SUB) private readonly pubsub: RedisPubSub
   ) {}
 
   @ResolveField(() => User)
-  async user(@Root() message: Message) {
-    const [user] = await this.knex
-      .select('u.*')
-      .from('users as u')
-      .join('messages as ms', 'ms.userId', '=', 'u.id')
-      .where('u.id', '=', message.userId);
-
-    return user;
+  user(@Root() message: Message, @Context() { userLoader }: GraphQLContext) {
+    return userLoader.load(message.userId);
   }
 
   @ResolveField(() => Group)
-  async group(@Root() message: Message) {
-    const [group] = await this.knex
-      .select('g.*')
-      .from('groups as g')
-      .join('messages as ms', 'ms.groupId', '=', 'g.id')
-      .where('g.id', '=', message.groupId);
-
-    return group;
+  group(@Root() message: Message, @Context() { groupLoader }: GraphQLContext) {
+    return groupLoader.load(message.groupId);
   }
 
   @Query(() => [Message], { nullable: 'items' })

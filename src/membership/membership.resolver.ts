@@ -1,6 +1,7 @@
 import { Inject, UseGuards } from '@nestjs/common';
 import {
   Args,
+  Context,
   Mutation,
   Query,
   ResolveField,
@@ -8,10 +9,9 @@ import {
   Root,
 } from '@nestjs/graphql';
 import { AuthGqlGuard } from '@src/auth/guards/auth.gql-guard';
+import { GraphQLContext } from '@src/graphql/types';
 import { Group } from '@src/group/group.type';
-import { KNEX_CONNECTION } from '@src/knex/knex.module';
 import { User } from '@src/user/user.type';
-import { Knex } from 'knex';
 import { GetInviteTokenInput } from './dto/get-invite-token.dto';
 import { JoinInput } from './dto/join.dto';
 import { LeaveInput } from './dto/leave.dto';
@@ -21,31 +21,22 @@ import { Membership } from './membership.type';
 
 @Resolver(() => Membership)
 export class MembershipResolver {
-  constructor(
-    private readonly membershipService: MembershipService,
-    @Inject(KNEX_CONNECTION) private readonly knex: Knex
-  ) {}
+  constructor(private readonly membershipService: MembershipService) {}
 
   @ResolveField(() => User)
-  async user(@Root() membership: Membership) {
-    const [user] = await this.knex
-      .select('u.*')
-      .from('users as u')
-      .join('memberships as m', 'm.userId', '=', 'u.id')
-      .where('u.id', '=', membership.userId);
-
-    return user;
+  user(
+    @Root() membership: Membership,
+    @Context() { userLoader }: GraphQLContext
+  ) {
+    return userLoader.load(membership.userId);
   }
 
   @ResolveField(() => Group)
-  async group(@Root() membership: Membership) {
-    const [group] = await this.knex
-      .select('g.*')
-      .from('groups as g')
-      .join('memberships as m', 'm.groupId', '=', 'g.id')
-      .where('g.id', '=', membership.groupId);
-
-    return group;
+  group(
+    @Root() membership: Membership,
+    @Context() { groupLoader }: GraphQLContext
+  ) {
+    return groupLoader.load(membership.groupId);
   }
 
   @Query(() => String)

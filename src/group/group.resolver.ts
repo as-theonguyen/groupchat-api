@@ -31,22 +31,18 @@ export class GroupResolver {
 
   @ResolveField(() => [Membership], { nullable: 'items' })
   async memberships(@Root() group: Group) {
-    const memberships = await this.knex
-      .select('m.*')
-      .from('memberships as m')
-      .join('groups as g', 'm.groupId', '=', 'g.id')
-      .where('m.groupId', '=', group.id);
+    const memberships = await this.knex('memberships')
+      .select('*')
+      .where('groupId', '=', group.id);
 
     return memberships;
   }
 
   @ResolveField(() => [Message], { nullable: 'items' })
   async messages(@Root() group: Group) {
-    const messages = await this.knex
-      .select('ms.*')
-      .from('messages as ms')
-      .join('groups as g', 'ms.groupId', '=', 'g.id')
-      .where('ms.groupId', '=', group.id);
+    const messages = await this.knex('messages')
+      .select('*')
+      .where('groupId', '=', group.id);
 
     return messages;
   }

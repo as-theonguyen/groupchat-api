@@ -27,22 +27,18 @@ export class UserResolver {
 
   @ResolveField(() => [Membership], { nullable: 'items' })
   async memberships(@Root() user: User) {
-    const memberships = await this.knex
-      .select('m.*')
-      .from('memberships as m')
-      .join('users as u', 'm.userId', '=', 'u.id')
-      .where('m.userId', '=', user.id);
+    const memberships = await this.knex('memberships')
+      .select('*')
+      .where('userId', '=', user.id);
 
     return memberships;
   }
 
   @ResolveField(() => [Message], { nullable: 'items' })
   async messages(@Root() user: User) {
-    const messages = await this.knex
-      .select('ms.*')
-      .from('messages as ms')
-      .join('users as u', 'ms.userId', '=', 'u.id')
-      .where('ms.userId', '=', user.id);
+    const messages = await this.knex('messages')
+      .select('*')
+      .where('userId', '=', user.id);
 
     return messages;
   }
