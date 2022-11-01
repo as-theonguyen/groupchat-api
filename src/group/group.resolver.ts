@@ -13,6 +13,7 @@ import { GraphQLContext } from '@src/graphql/types';
 import { KNEX_CONNECTION } from '@src/knex/knex.module';
 import { MemberGuard } from '@src/membership/guards/member.guard';
 import { Membership } from '@src/membership/membership.type';
+import { MessageService } from '@src/message/message.service';
 import { Message } from '@src/message/message.type';
 import { Knex } from 'knex';
 import { CreateGroupInput } from './dto/create-group.dto';
@@ -26,6 +27,7 @@ import { GroupAdminGuard } from './guards/group-admin.guard';
 export class GroupResolver {
   constructor(
     private readonly groupService: GroupService,
+    private readonly messageService: MessageService,
     @Inject(KNEX_CONNECTION) private readonly knex: Knex
   ) {}
 
@@ -40,9 +42,9 @@ export class GroupResolver {
 
   @ResolveField(() => [Message], { nullable: 'items' })
   async messages(@Root() group: Group) {
-    const messages = await this.knex('messages')
-      .select('*')
-      .where('groupId', '=', group.id);
+    const messages = await this.messageService.findByGroup({
+      groupId: group.id,
+    });
 
     return messages;
   }

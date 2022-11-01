@@ -13,6 +13,8 @@ input CreateMessageInput {
 
 input FindByGroupInput {
   groupId: ID!
+  limit: Int
+  offset: Int
 }
 
 input GetInviteTokenInput {

@@ -4,5 +4,6 @@ import { MessageResolver } from './message.resolver';
 
 @Module({
   providers: [MessageService, MessageResolver],
+  exports: [MessageService],
 })
 export class MessageModule {}
