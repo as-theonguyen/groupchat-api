@@ -16,6 +16,7 @@ import { GetInviteTokenInput } from './dto/get-invite-token.dto';
 import { JoinInput } from './dto/join.dto';
 import { LeaveInput } from './dto/leave.dto';
 import { MemberGuard } from './guards/member.guard';
+import { UserMembershipGuard } from './guards/user-membership.guard';
 import { MembershipService } from './membership.service';
 import { Membership } from './membership.type';
 
@@ -47,14 +48,14 @@ export class MembershipResolver {
   }
 
   @Mutation(() => Membership)
-  @UseGuards(AuthGqlGuard)
+  @UseGuards(AuthGqlGuard, UserMembershipGuard)
   async join(@Args('input') input: JoinInput) {
     const membership = await this.membershipService.join(input);
     return membership;
   }
 
   @Mutation(() => Boolean)
-  @UseGuards(AuthGqlGuard, MemberGuard)
+  @UseGuards(AuthGqlGuard, UserMembershipGuard)
   async leave(@Args('input') input: LeaveInput) {
     const result = await this.membershipService.leave(input);
     return result;

@@ -18,6 +18,7 @@ import { User } from '@src/user/user.type';
 import { RedisPubSub } from 'graphql-redis-subscriptions';
 import { CreateMessageInput } from './dto/create-message.dto';
 import { FindByGroupInput } from './dto/find-by-group.dto';
+import { MessageAddedInput } from './dto/message-added.dto';
 import { MessageInput } from './dto/message.dto';
 import { MessageGuard } from './guards/message.guard';
 import { MessageService } from './message.service';
@@ -72,7 +73,7 @@ export class MessageResolver {
     resolve: (value) => value,
   })
   @UseGuards(AuthGqlGuard, MemberGuard)
-  messageAdded(@Args('input') _: FindByGroupInput) {
+  messageAdded(@Args('input') _: MessageAddedInput) {
     return this.pubsub.asyncIterator('messageAdded');
   }
 }

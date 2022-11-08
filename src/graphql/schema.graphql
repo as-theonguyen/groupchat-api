@@ -65,6 +65,10 @@ type Message {
   user: User!
 }
 
+input MessageAddedInput {
+  groupId: ID!
+}
+
 input MessageInput {
   id: ID!
 }
@@ -102,7 +106,7 @@ type Session {
 }
 
 type Subscription {
-  messageAdded(input: FindByGroupInput!): Message!
+  messageAdded(input: MessageAddedInput!): Message!
 }
 
 input UpdateGroupInput {

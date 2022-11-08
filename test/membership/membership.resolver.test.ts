@@ -166,7 +166,7 @@ describe('MembershipResolver', () => {
       });
     });
 
-    it('should only allow logged in user to proceed', async () => {
+    it('should only allow the user to proceed', async () => {
       const inviteToken = await jwt.signAsync(
         { groupId: group.id },
         { secret: configService.get('jwtSecret'), expiresIn: '10m' }
@@ -181,6 +181,9 @@ describe('MembershipResolver', () => {
             userId: user.id,
             inviteToken,
           },
+        },
+        headers: {
+          authorization: memberToken.value,
         },
       });
 
@@ -214,6 +217,27 @@ describe('MembershipResolver', () => {
       });
 
       expect(response.data.leave).toBe(true);
+    });
+
+    it('should only allow the user to proceed', async () => {
+      const response = await sendGraphQLRequest({
+        app: app.getHttpServer(),
+        query: leaveMutation,
+        operationName: 'Leave',
+        variables: {
+          input: {
+            userId: member.id,
+            groupId: group.id,
+          },
+        },
+        headers: {
+          authorization: userToken.value,
+        },
+      });
+
+      expect(response.data).toBeNull();
+
+      expect(response.errors[0].message).toBe('Unauthorized');
     });
   });
 });
