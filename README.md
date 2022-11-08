@@ -15,8 +15,10 @@ API for a realtime group chat application.
 ## Features
 
 - Auth (register, login, logout, logout from all devices)
-- Group
-- Message
+- Groups
+- Join group via an invite token (JWT) that expires in 10 minutes
+- Leave group
+- Messages
 - Group permission based on role (group admin, normal member)
 - Realtime update to new message added via GraphQL subscription
 
