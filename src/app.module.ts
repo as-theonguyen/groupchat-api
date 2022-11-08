@@ -39,6 +39,7 @@ import { GraphQLContext } from './graphql/types';
         return {
           cors: false,
           path: '/api/graphql',
+          playground: true,
           autoSchemaFile: join(
             process.cwd(),
             'src',
@@ -53,7 +54,8 @@ import { GraphQLContext } from './graphql/types';
               ctx = await utilService.buildGraphQLContext(extra.authorization);
             } else if (req && req.headers.authorization) {
               ctx = await utilService.buildGraphQLContext(
-                req.headers.authorization
+                req.headers.authorization,
+                req
               );
             } else {
               ctx = await utilService.buildGraphQLContext();

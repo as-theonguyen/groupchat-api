@@ -3,8 +3,8 @@ import { hash, verify } from 'argon2';
 import { v4 } from 'uuid';
 import { Knex } from 'knex';
 import { KNEX_CONNECTION } from '@src/knex/knex.module';
-import { LoginDTO } from '@src/auth/dto/login.dto';
-import { RegisterDTO } from '@src/auth/dto/register.dto';
+import { LoginInput } from '@src/auth/dto/login.dto';
+import { RegisterInput } from '@src/auth/dto/register.dto';
 import { UtilService } from '@src/util/util.service';
 
 @Injectable()
@@ -14,7 +14,7 @@ export class AuthService {
     private readonly utilService: UtilService
   ) {}
 
-  async register(input: RegisterDTO) {
+  async register(input: RegisterInput) {
     const result = await this.knex.transaction(async (trx) => {
       try {
         const [existingUser] = await trx('users')
@@ -64,7 +64,7 @@ export class AuthService {
     };
   }
 
-  async login(input: LoginDTO) {
+  async login(input: LoginInput) {
     const result = await this.knex.transaction(async (trx) => {
       try {
         const [user] = await trx('users')

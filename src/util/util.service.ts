@@ -5,6 +5,7 @@ import { UserService } from '@src/user/user.service';
 import { User } from '@src/user/user.type';
 import { randomBytes } from 'crypto';
 import * as DataLoader from 'dataloader';
+import { Request } from 'express';
 import { Knex } from 'knex';
 
 @Injectable()
@@ -27,7 +28,7 @@ export class UtilService {
     });
   }
 
-  async buildGraphQLContext(authorization?: string) {
+  async buildGraphQLContext(authorization?: string, req?: Request) {
     let user: User | null;
 
     if (!authorization) {
@@ -37,6 +38,7 @@ export class UtilService {
     }
 
     return {
+      req,
       user,
       userLoader: this.createUserLoader(),
       groupLoader: this.createGroupLoader(),
