@@ -37,6 +37,7 @@ export class KnexModule {
       provide: KNEX_CONNECTION,
       useFactory: async (...args: any[]) => {
         const knexConfig = await options.useFactory(...args);
+        console.log(knexConfig);
         const knex = initKnex(knexConfig);
         return knex;
       },

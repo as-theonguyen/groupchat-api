@@ -27,6 +27,7 @@ import { GraphQLContext } from './graphql/types';
       inject: [ConfigService],
       useFactory: (configService: ConfigService) => {
         const env = configService.get('env');
+        console.log(env);
         const knexOptions = knexConfig[env];
         return knexOptions;
       },
@@ -40,6 +41,8 @@ import { GraphQLContext } from './graphql/types';
           cors: false,
           path: '/api/graphql',
           playground: true,
+          cache: 'bounded',
+          csrfPrevention: true,
           autoSchemaFile: join(
             process.cwd(),
             'src',
