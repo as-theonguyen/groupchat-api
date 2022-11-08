@@ -40,8 +40,6 @@ import { GraphQLContext } from './graphql/types';
         return {
           cors: false,
           path: '/api/graphql',
-          playground: true,
-          introspection: true,
           cache: 'bounded',
           csrfPrevention: true,
           autoSchemaFile: join(
