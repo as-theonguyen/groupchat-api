@@ -43,6 +43,7 @@ import { AppController } from './app.controller';
           path: '/api/graphql',
           cache: 'bounded',
           csrfPrevention: true,
+          introspection: true,
           autoSchemaFile: join(
             process.cwd(),
             'src',
