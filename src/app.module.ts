@@ -15,6 +15,7 @@ import { MembershipModule } from './membership/membership.module';
 import { MessageModule } from './message/message.module';
 import { PubsubModule } from './pubsub/pubsub.module';
 import { GraphQLContext } from './graphql/types';
+import { AppController } from './app.controller';
 
 @Module({
   imports: [
@@ -83,5 +84,6 @@ import { GraphQLContext } from './graphql/types';
     MessageModule,
     PubsubModule,
   ],
+  controllers: [AppController],
 })
 export class AppModule {}
