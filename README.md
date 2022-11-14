@@ -8,6 +8,8 @@ The PostgreSQL database is hosted on [bit.io](https://bit.io/).
 
 The Redis instance is hosted on [Upstash](https://upstash.com/).
 
+If you don't want to clone the project locally and play around (see below), either use your own frontend or a client (like [Banana Cake Pop](https://chillicream.com/docs/bananacakepop)) to interact with the hosted API.
+
 ## Tech
 
 - Node
