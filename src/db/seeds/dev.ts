@@ -67,10 +67,10 @@ const otherMembership = membershipFactory
 const messages = [
   messageFactory
     .params({ userId: groupAdmin.id, groupId: groups[0].id })
-    .buildList(2),
+    .buildList(40),
   messageFactory
     .params({ userId: groupMember.id, groupId: groups[0].id })
-    .buildList(4),
+    .buildList(40),
 ];
 
 export async function seed(knex: Knex): Promise<void> {

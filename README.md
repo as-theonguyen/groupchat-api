@@ -2,6 +2,12 @@
 
 API for a realtime group chat application.
 
+This API is hosted on the [Render free tier](https://render.com/docs/free#free-web-services), which will sleep after 15 minutes of inactivity. This can cause a response delay of up to 30 seconds for the first request that comes in after a period of inactivity.
+
+The PostgreSQL database is hosted on [bit.io](https://bit.io/).
+
+The Redis instance is hosted on [Upstash](https://upstash.com/).
+
 ## Tech
 
 - Node

@@ -2,11 +2,7 @@ import { Field, ID, InputType, Int } from '@nestjs/graphql';
 import { IsInt, IsOptional, IsUUID } from 'class-validator';
 
 @InputType()
-export class FindByGroupInput {
-  @IsUUID()
-  @Field(() => ID)
-  groupId: string;
-
+export class GroupMessagesFieldInput {
   @IsOptional()
   @IsInt()
   @Field(() => Int, { nullable: true })
@@ -16,4 +12,11 @@ export class FindByGroupInput {
   @IsInt()
   @Field(() => Int, { nullable: true })
   offset?: number;
+}
+
+@InputType()
+export class FindByGroupInput extends GroupMessagesFieldInput {
+  @IsUUID()
+  @Field(() => ID)
+  groupId: string;
 }

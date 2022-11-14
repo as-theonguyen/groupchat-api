@@ -13,6 +13,7 @@ import { GraphQLContext } from '@src/graphql/types';
 import { KNEX_CONNECTION } from '@src/knex/knex.module';
 import { MemberGuard } from '@src/membership/guards/member.guard';
 import { Membership } from '@src/membership/membership.type';
+import { GroupMessagesFieldInput } from '@src/message/dto/find-by-group.dto';
 import { MessageService } from '@src/message/message.service';
 import { Message } from '@src/message/message.type';
 import { Knex } from 'knex';
@@ -41,9 +42,13 @@ export class GroupResolver {
   }
 
   @ResolveField(() => [Message], { nullable: 'items' })
-  async messages(@Root() group: Group) {
+  async messages(
+    @Root() group: Group,
+    @Args('input') input: GroupMessagesFieldInput
+  ) {
     const messages = await this.messageService.findByGroup({
       groupId: group.id,
+      ...input,
     });
 
     return messages;

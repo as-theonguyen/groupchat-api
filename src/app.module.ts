@@ -28,7 +28,6 @@ import { AppController } from './app.controller';
       inject: [ConfigService],
       useFactory: (configService: ConfigService) => {
         const env = configService.get('env');
-        console.log(env);
         const knexOptions = knexConfig[env];
         return knexOptions;
       },
@@ -42,7 +41,6 @@ import { AppController } from './app.controller';
           cors: false,
           path: '/api/graphql',
           cache: 'bounded',
-          csrfPrevention: true,
           introspection: true,
           autoSchemaFile: join(
             process.cwd(),

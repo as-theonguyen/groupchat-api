@@ -24,12 +24,17 @@ input GetInviteTokenInput {
 type Group {
   id: ID!
   memberships: [Membership]!
-  messages: [Message]!
+  messages(input: GroupMessagesFieldInput!): [Message]!
   name: String!
 }
 
 input GroupInput {
   id: ID!
+}
+
+input GroupMessagesFieldInput {
+  limit: Int
+  offset: Int
 }
 
 input JoinInput {

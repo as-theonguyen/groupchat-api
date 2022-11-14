@@ -21,11 +21,12 @@ export class MessageService {
   }
 
   async findByGroup(input: FindByGroupInput) {
-    const limit = input.limit || 10;
+    const limit = input.limit || 20;
     const offset = input.offset || 0;
 
-    const messages = await this.knex('messages')
+    const messages = await this.knex
       .select('*')
+      .from('messages')
       .where({
         groupId: input.groupId,
       })
